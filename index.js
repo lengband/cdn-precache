@@ -19,7 +19,8 @@ getip.get('https://api.smartproxy.cn/web_v1/ip/get-ip-v3?app_key=a7f64f068513075
     // 23.139.224.203:13693
     // 23.139.224.203:13694
     const agentList = res.data.split('\r\n');
-    const testUrl = 'https://static.okx.com/cdnpre/assets/okfe/inner/assets-system-test/0.0.5/d.js';
+    const testUrl = 'https://static.okx.com/cdnpre/assets/okfe/inner/assets-system-test/0.0.5/e.js';
+    // const testUrl = 'https://static.coinall.ltd/cdnpre/assets/okfe/inner/assets-system-test/0.0.5/d.js';
     console.log({ agentList, testUrl });
     agentList.forEach(async (item, index) => {
       await sleep(2 * index);
@@ -27,7 +28,10 @@ getip.get('https://api.smartproxy.cn/web_v1/ip/get-ip-v3?app_key=a7f64f068513075
       const agent = new SocksProxyAgent('socks5://' + item);
       const instance = axios.create({
         httpAgent: agent,
-        httpsAgent: agent
+        httpsAgent: agent,
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36'
+        }
       });
       // 发送请求
       const { data: { data } } = await instance.get('http://143.92.61.72/utils/getRequestIpInfo')
