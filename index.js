@@ -12,7 +12,7 @@ const sleep = (s) => {
   })
 }
 
-getip.get('https://api.smartproxy.cn/web_v1/ip/get-ip-v3?app_key=a7f64f068513075d0a4014d7195d80f2&pt=9&num=200&ep=&cc=SG&state=&city=&life=30&protocol=1&format=txt&lb=%5Cr%5Cn')
+getip.get('https://api.smartproxy.cn/web_v1/ip/get-ip-v3?app_key=a7f64f068513075d0a4014d7195d80f2&pt=9&num=100&ep=&cc=SG&state=&city=&life=30&protocol=1&format=txt&lb=%5Cr%5Cn')
   .then((res) => {
     // res.data 是 下面的三行数据
     // 23.139.224.203:13692
@@ -22,6 +22,7 @@ getip.get('https://api.smartproxy.cn/web_v1/ip/get-ip-v3?app_key=a7f64f068513075
     const testUrl = 'https://static.okx.com/cdnpre/assets/okfe/inner/assets-system-test/0.0.5/c.js';
     console.log({ agentList, testUrl });
     agentList.forEach(async (item, index) => {
+      await sleep(2)
       agentList[index] = 'socks5://' + item;
       const agent = new SocksProxyAgent('socks5://' + item);
       const instance = axios.create({
