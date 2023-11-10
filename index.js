@@ -6,7 +6,7 @@ console.log('-------');
 
 const getip = axios.create();
 
-getip.get('https://api.smartproxy.cn/web_v1/ip/get-ip-v3?app_key=a7f64f068513075d0a4014d7195d80f2&pt=9&num=3&ep=&cc=US&state=&city=&life=30&protocol=1&format=txt&lb=%5Cr%5Cn')
+getip.get('https://api.smartproxy.cn/web_v1/ip/get-ip-v3?app_key=a7f64f068513075d0a4014d7195d80f2&pt=9&num=3&ep=&cc=SG&state=&city=&life=30&protocol=1&format=txt&lb=%5Cr%5Cn')
     .then(res => {
       // res.data 是 下面的三行数据
       // 23.139.224.203:13692
@@ -23,7 +23,8 @@ getip.get('https://api.smartproxy.cn/web_v1/ip/get-ip-v3?app_key=a7f64f068513075
           httpsAgent: agent
       });
       // 发送请求
-      instance.get('http://143.92.61.72/utils/getRequestIpInfo')
+      // instance.get('http://143.92.61.72/utils/getRequestIpInfo')
+      instance.get('https://static.okx.com/cdnpre/assets/okfe/inner/assets-system-test/0.0.3/index.css')
         .then(response => {
             console.log(response.data);
         })
