@@ -19,7 +19,7 @@ getip.get('https://api.smartproxy.cn/web_v1/ip/get-ip-v3?app_key=a7f64f068513075
     // 23.139.224.203:13693
     // 23.139.224.203:13694
     const agentList = res.data.split('\r\n');
-    const testUrl = 'https://www.okx.com/cdnpre/assets/okfe/inner/assets-system-test/0.0.5/b.js';
+    const testUrl = 'https://www.okx.com/cdnpre/assets/okfe/inner/assets-system-test/0.0.5/c.js';
     // const testUrl = 'https://static.coinall.ltd/cdnpre/assets/okfe/inner/assets-system-test/0.0.5/e.js';
     console.log({ agentList, testUrl });
     agentList.forEach(async (item, index) => {
@@ -37,7 +37,10 @@ getip.get('https://api.smartproxy.cn/web_v1/ip/get-ip-v3?app_key=a7f64f068513075
       const { data: { data } } = await instance.get('http://143.92.61.72/utils/getRequestIpInfo')
       instance.get(testUrl)
         .then(response => {
-          console.log({ status: response.status, cloudfrontHit: response.headers['x-cache'], CloudflareHit: response.headers['Cf-Cache-Status'], statusText: response.statusText, ipInfo: data });
+          console.log({ status: response.status, cloudfrontHit: response.headers['x-cache'], CloudflareHit: response.headers['cf-cache-status'], statusText: response.statusText, ipInfo: data });
+          if (index === 0) {
+            console.log(response.data, 'resssssssss');
+          }
         })
         .catch(error => {
             console.error('get URL error:', error?.cause);
