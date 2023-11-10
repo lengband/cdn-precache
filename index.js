@@ -23,7 +23,7 @@ getip.get('https://api.smartproxy.cn/web_v1/ip/get-ip-v3?app_key=a7f64f068513075
     const { data: { data } } = await instance.get('http://143.92.61.72/utils/getRequestIpInfo')
     instance.get('https://static.okx.com/cdnpre/assets/okfe/inner/assets-system-test/0.0.3/a.js')
       .then(response => {
-        console.log({ status: response.status, headers: response.headers, statusText: response.statusText, ipInfo: data });
+        console.log({ status: response.status, cloudfrontHit: response.headers['x-cache'], CloudflareHit: response.headers['Cf-Cache-Status'], statusText: response.statusText, ipInfo: data });
       })
       .catch(error => {
           console.error('get URL error:', error);
