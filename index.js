@@ -22,6 +22,7 @@ getip.get('https://api.smartproxy.cn/web_v1/ip/get-ip-v3?app_key=a7f64f068513075
     const testUrl = 'https://static.okx.com/cdn/assets/okfe/inner/assets-system-test/0.0.4/e.js';
     console.log({ agentList, testUrl });
     agentList.forEach(async (item, index) => {
+      await sleep(0.5);
       agentList[index] = 'socks5://' + item;
       const agent = new SocksProxyAgent('socks5://' + item);
       const instance = axios.create({
