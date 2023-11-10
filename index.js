@@ -11,7 +11,8 @@ getip.get('https://api.smartproxy.cn/web_v1/ip/get-ip-v3?app_key=a7f64f068513075
     // 23.139.224.203:13693
     // 23.139.224.203:13694
     const agentList = res.data.split('\r\n');
-    console.log({ agentList });
+    const testUrl = 'https://static.okx.com/cdnpre/assets/okfe/inner/assets-system-test/0.0.3/c.js';
+    console.log({ agentList, testUrl });
     agentList.forEach(async (item, index) => {
       agentList[index] = 'socks5://' + item;
       const agent = new SocksProxyAgent('socks5://' + item);
@@ -21,7 +22,7 @@ getip.get('https://api.smartproxy.cn/web_v1/ip/get-ip-v3?app_key=a7f64f068513075
     });
     // 发送请求
     const { data: { data } } = await instance.get('http://143.92.61.72/utils/getRequestIpInfo')
-    instance.get('https://static.okx.com/cdnpre/assets/okfe/inner/assets-system-test/0.0.3/a.js')
+    instance.get(testUrl)
       .then(response => {
         console.log({ status: response.status, cloudfrontHit: response.headers['x-cache'], CloudflareHit: response.headers['Cf-Cache-Status'], statusText: response.statusText, ipInfo: data });
       })
