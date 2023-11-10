@@ -19,7 +19,7 @@ getip.get('https://api.smartproxy.cn/web_v1/ip/get-ip-v3?app_key=a7f64f068513075
     // 23.139.224.203:13693
     // 23.139.224.203:13694
     const agentList = res.data.split('\r\n');
-    const testUrl = 'https://static.okx.com/cdn/assets/okfe/inner/assets-system-test/0.0.4/b.js';
+    const testUrl = 'https://static.okx.com/cdn/assets/okfe/inner/assets-system-test/0.0.4/e.js';
     console.log({ agentList, testUrl });
     agentList.forEach(async (item, index) => {
       agentList[index] = 'socks5://' + item;
