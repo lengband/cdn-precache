@@ -19,7 +19,7 @@ getip.get('https://api.smartproxy.cn/web_v1/ip/get-ip-v3?app_key=a7f64f068513075
     // 23.139.224.203:13693
     // 23.139.224.203:13694
     const agentList = res.data.split('\r\n');
-    const testUrl = 'https://static.okx.com/cdn/assets/okfe/inner/assets-system-test/0.0.4/index.js';
+    const testUrl = 'https://static.okx.com/cdn/assets/okfe/inner/assets-system-test/0.0.4/a.js';
     console.log({ agentList, testUrl });
     agentList.forEach(async (item, index) => {
       await sleep(2 * index);
@@ -28,16 +28,16 @@ getip.get('https://api.smartproxy.cn/web_v1/ip/get-ip-v3?app_key=a7f64f068513075
       const instance = axios.create({
         httpAgent: agent,
         httpsAgent: agent
-    });
-    // 发送请求
-    const { data: { data } } = await instance.get('http://143.92.61.72/utils/getRequestIpInfo')
-    instance.get(testUrl)
-      .then(response => {
-        console.log({ status: response.status, cloudfrontHit: response.headers['x-cache'], CloudflareHit: response.headers['Cf-Cache-Status'], statusText: response.statusText, ipInfo: data });
-      })
-      .catch(error => {
-          console.error('get URL error:', error);
       });
+      // 发送请求
+      const { data: { data } } = await instance.get('http://143.92.61.72/utils/getRequestIpInfo')
+      instance.get(testUrl)
+        .then(response => {
+          console.log({ status: response.status, cloudfrontHit: response.headers['x-cache'], CloudflareHit: response.headers['Cf-Cache-Status'], statusText: response.statusText, ipInfo: data });
+        })
+        .catch(error => {
+            console.error('get URL error:', error);
+        });
     })
   }).catch(error => {
     console.error('wrap error:', error);
