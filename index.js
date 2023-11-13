@@ -36,16 +36,16 @@ getip.get('https://api.smartproxy.cn/web_v1/ip/get-ip-v3?app_key=5d884abaf2ac978
       // 发送请求
       const { data: { data } } = await instance.get('http://143.92.61.72/utils/getRequestIpInfo')
       console.log({ ipInfo: data });
-      instance.get(testUrl)
-        .then(response => {
-          console.log({ status: response.status, cloudfrontHit: response.headers['x-cache'], CloudflareHit: response.headers['cf-cache-status'], statusText: response.statusText });
-          if (index === 0) {
-            console.log(response.data, 'resssssssss');
-          }
-        })
-        .catch(error => {
-          console.error('get URL error:', error);
-        });
+      // instance.get(testUrl)
+      //   .then(response => {
+      //     console.log({ status: response.status, cloudfrontHit: response.headers['x-cache'], CloudflareHit: response.headers['cf-cache-status'], statusText: response.statusText });
+      //     if (index === 0) {
+      //       console.log(response.data, 'resssssssss');
+      //     }
+      //   })
+      //   .catch(error => {
+      //     console.error('get URL error:', error);
+      //   });
     })
   }).catch(error => {
     console.error('wrap error:', error);
