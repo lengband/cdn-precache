@@ -12,7 +12,7 @@ const sleep = (s) => {
   })
 }
 
-getip.get('https://api.smartproxy.cn/web_v1/ip/get-ip-v3?app_key=5d884abaf2ac978d71f6e2c9987e1508&pt=9&num=20&ep=&cc=IR&state=&city=&life=30&protocol=1&format=json&lb=%5Cr%5Cn')
+getip.get('https://api.smartproxy.cn/web_v1/ip/get-ip-v3?app_key=5d884abaf2ac978d71f6e2c9987e1508&pt=9&num=20&ep=&cc=SN&state=&city=&life=30&protocol=1&format=json&lb=%5Cr%5Cn')
   .then((res) => {
     console.log(res.data, 'res.data', typeof res.data);
     // res.data 是 类似下面的数据
@@ -44,7 +44,7 @@ getip.get('https://api.smartproxy.cn/web_v1/ip/get-ip-v3?app_key=5d884abaf2ac978
           }
         })
         .catch(error => {
-          console.error('get URL error:', error?.cause);
+          console.error('get URL error:', error);
         });
     })
   }).catch(error => {
