@@ -12,7 +12,7 @@ const sleep = (s) => {
   })
 }
 
-getip.get('https://api.smartproxy.cn/web_v1/ip/get-ip-v3?app_key=5d884abaf2ac978d71f6e2c9987e1508&pt=9&num=20&ep=&cc=SN&state=&city=&life=30&protocol=1&format=json&lb=%5Cr%5Cn')
+getip.get('https://api.smartproxy.cn/web_v1/ip/get-ip-v3?app_key=5d884abaf2ac978d71f6e2c9987e1508&pt=9&num=5&ep=&cc=SG&state=&city=&life=30&protocol=1&format=json&lb=%5Cr%5Cn')
   .then((res) => {
     console.log(res.data, 'res.data', typeof res.data);
     // res.data 是 类似下面的数据
@@ -24,7 +24,6 @@ getip.get('https://api.smartproxy.cn/web_v1/ip/get-ip-v3?app_key=5d884abaf2ac978
     const testUrl = 'https://static.okx.com/cdnpre/assets/okfe/inner/assets-system-test/0.0.5/d.js';
     console.log({ agentList, testUrl });
     agentList.forEach(async (item, index) => {
-      await sleep(1 * index);
       agentList[index] = 'socks5://' + item;
       const agent = new SocksProxyAgent('socks5://' + item);
       const instance = axios.create({
@@ -36,9 +35,10 @@ getip.get('https://api.smartproxy.cn/web_v1/ip/get-ip-v3?app_key=5d884abaf2ac978
       });
       // 发送请求
       const { data: { data } } = await instance.get('http://143.92.61.72/utils/getRequestIpInfo')
+      console.log({ ipInfo: data });
       instance.get(testUrl)
         .then(response => {
-          console.log({ status: response.status, cloudfrontHit: response.headers['x-cache'], CloudflareHit: response.headers['cf-cache-status'], statusText: response.statusText, ipInfo: data });
+          console.log({ status: response.status, cloudfrontHit: response.headers['x-cache'], CloudflareHit: response.headers['cf-cache-status'], statusText: response.statusText });
           if (index === 0) {
             console.log(response.data, 'resssssssss');
           }
