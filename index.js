@@ -37,13 +37,13 @@ getip.get('https://api.smartproxy.cn/web_v1/ip/get-ip-v3?app_key=5d884abaf2ac978
       const { data: { data } } = await instance.get('http://143.92.61.72/utils/getRequestIpInfo')
       instance.get(testUrl)
         .then(response => {
-          console.log({ status: response.status, CloudflareHit: response.headers['cf-cache-status'], statusText: response.statusText, ipInfo: data });
+          console.log({ status: response.status, CloudflareHit: response.headers['cf-cache-status'], statusText: response.statusText, cfRay: response.headers['cf-ray'], ipInfo: data });
           if (index === 0) {
             console.log(response.data, 'resssssssss');
           }
         })
         .catch(error => {
-          console.error('get URL error:', error);
+          console.error('get URL error:', error?.cause);
         });
     })
   }).catch(error => {
