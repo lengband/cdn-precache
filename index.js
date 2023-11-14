@@ -12,7 +12,7 @@ const sleep = (s) => {
   })
 }
 
-getip.get('https://api.smartproxy.cn/web_v1/ip/get-ip-v3?app_key=5d884abaf2ac978d71f6e2c9987e1508&pt=9&num=10&ep=&cc=ng&state=&city=&life=30&protocol=1&format=json&lb=%5Cr%5Cn')
+getip.get('https://api.smartproxy.cn/web_v1/ip/get-ip-v3?app_key=5d884abaf2ac978d71f6e2c9987e1508&pt=9&num=10&ep=&cc=ro&state=&city=&life=30&protocol=1&format=json&lb=%5Cr%5Cn')
   .then((res) => {
     // res.data 是 类似下面的数据
     // 23.139.224.203:13692
@@ -35,9 +35,18 @@ getip.get('https://api.smartproxy.cn/web_v1/ip/get-ip-v3?app_key=5d884abaf2ac978
       });
       // 发送请求
       const { data: { data } } = await instance.get('http://143.92.61.72/utils/getRequestIpInfo')
+      const startTime = Date.now();
       instance.get(testUrl)
         .then(response => {
-          console.log({ status: response.status, CloudflareHit: response.headers['cf-cache-status'], statusText: response.statusText, cfRay: response.headers['cf-ray'], ipInfo: data });
+          console.log({
+            index,
+            status: response.status,
+            CloudflareHit: response.headers['cf-cache-status'],
+            statusText: response.statusText,
+            cfRay: response.headers['cf-ray'],
+            ipInfo: data,
+            time: Date.now() - startTime,
+          });
           if (index === 0) {
             console.log(response.data, 'resssssssss');
           }
