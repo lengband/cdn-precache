@@ -12,14 +12,14 @@ const sleep = (s) => {
   })
 }
 
-getip.get('https://api.smartproxy.cn/web_v1/ip/get-ip-v3?app_key=5d884abaf2ac978d71f6e2c9987e1508&pt=9&num=10&ep=&cc=nl&state=&city=&life=30&protocol=1&format=json&lb=%5Cr%5Cn')
+getip.get('https://api.smartproxy.cn/web_v1/ip/get-ip-v3?app_key=5d884abaf2ac978d71f6e2c9987e1508&pt=9&num=10&ep=&cc=ar&state=&city=&life=30&protocol=1&format=json&lb=%5Cr%5Cn')
   .then((res) => {
     // res.data 是 类似下面的数据
     // 23.139.224.203:13692
     // 23.139.224.203:13693
     // 23.139.224.203:13694
     const agentList = res.data.data.list;
-    const testUrl = 'https://www.okx.com/cdn/assets/okfe/inner/assets-system-test/0.0.5/index.js';
+    const testUrl = 'https://www.okx.com/cdn/assets/okfe/inner/assets-system-test/0.0.5/b.js';
     // const testUrl = 'https://static.okx.com/cdnpre/assets/okfe/inner/assets-system-test/0.0.5/d.js';
     console.log({ agentList, testUrl });
     agentList.forEach(async (item, index) => {
