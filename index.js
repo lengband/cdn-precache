@@ -19,7 +19,7 @@ getip.get('https://api.smartproxy.cn/web_v1/ip/get-ip-v3?app_key=5d884abaf2ac978
     // 23.139.224.203:13693
     // 23.139.224.203:13694
     const agentList = res.data.data.list;
-    const testUrl = 'https://www.okx.com/cdn/assets/okfe/inner/assets-system-test/0.0.5/index.css';
+    const testUrl = 'https://www.okx.com/cdn/assets/okfe/inner/assets-system-test/0.0.5/index.js';
     // const testUrl = 'https://static.okx.com/cdnpre/assets/okfe/inner/assets-system-test/0.0.5/d.js';
     console.log({ agentList, testUrl });
     agentList.forEach(async (item, index) => {
