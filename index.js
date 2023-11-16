@@ -35,6 +35,7 @@ getip.get('http://api.proxy.ipidea.io/getBalanceProxyIp?num=10&return_type=json&
       });
       // 发送请求
       const { data: { data } } = await instance.get('http://143.92.61.72/utils/getRequestIpInfo')
+      console.log({ ip: data });
       const startTime = Date.now();
       instance.get(testUrl)
         .then(response => {
@@ -44,7 +45,6 @@ getip.get('http://api.proxy.ipidea.io/getBalanceProxyIp?num=10&return_type=json&
             CloudflareHit: response.headers['cf-cache-status'],
             statusText: response.statusText,
             cfRay: response.headers['cf-ray'],
-            ipInfo: data,
             time: Date.now() - startTime,
           });
           if (index === 0) {
@@ -52,7 +52,7 @@ getip.get('http://api.proxy.ipidea.io/getBalanceProxyIp?num=10&return_type=json&
           }
         })
         .catch(error => {
-          console.error('get URL error:', error?.cause);
+          console.error('get URL error:', error);
         });
     })
   }).catch(error => {
