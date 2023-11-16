@@ -19,7 +19,7 @@ getip.get('http://api.proxy.ipidea.io/getBalanceProxyIp?num=10&return_type=json&
     // 23.139.224.203:13692
     // 23.139.224.203:13693
     // 23.139.224.203:13694
-    const agentList = res.data.data.list;
+    const agentList = res.data.data;
     const testUrl = 'https://www.okx.com/cdn/assets/okfe/inner/assets-system-test/0.0.5/b.js';
     // const testUrl = 'https://static.okx.com/cdnpre/assets/okfe/inner/assets-system-test/0.0.5/d.js';
     console.log({ agentList, testUrl });
