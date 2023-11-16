@@ -25,7 +25,7 @@ getip.get('http://api.proxy.ipidea.io/getBalanceProxyIp?num=10&return_type=json&
     console.log({ agentList, testUrl });
     agentList.forEach(async (item, index) => {
       await sleep(2 * index);
-      const agent = new SocksProxyAgent(`socks5://${item.id}:${item.port}`);
+      const agent = new SocksProxyAgent(`socks5://${item.ip}:${item.port}`);
       const instance = axios.create({
         httpAgent: agent,
         httpsAgent: agent,
