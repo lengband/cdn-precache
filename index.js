@@ -17,7 +17,7 @@ class Precache {
   async start() {
     try {
       const projectVersion = await axiosInstance.get(
-        `${cdnBaseUrl}/cdn/assets/projectVerson.json?v=${+new Date()}}`
+        `${cdnBaseUrl}/projectVerson.json?v=${+new Date()}}`
       );
       const targetProjects = projectWhiteList.reduce((acc, cur) => {
         acc[cur] = projectVersion.data[cur];
@@ -43,7 +43,7 @@ class Precache {
   }
 
   async diffProjectManifest(projectName, version) {
-    const url = `${cdnBaseUrl}/cdn/assets/okfe/${projectName}/${version}/asset-manifest.json`;
+    const url = `${cdnBaseUrl}/okfe/${projectName}/${version}/asset-manifest.json`;
     const { data: manifestRes } = await axiosInstance.get(url);
 
     // 与本地文件对比，对比 files: string[] 字段
@@ -76,7 +76,7 @@ class Precache {
     if (isContentweb) {
       versionPrefix = '/contentweb';
     }
-    const assetUrl = `${cdnBaseUrl}/cdn/assets/okfe/${project}${versionPrefix}/${filename}`;
+    const assetUrl = `${cdnBaseUrl}/okfe/${project}${versionPrefix}/${filename}`;
     return assetUrl
   }
 }

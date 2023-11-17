@@ -39,7 +39,7 @@ const projectWhiteList = [
   'growth'
 ]
 
-const cdnBaseUrl = 'https://static.okx.com'
+const cdnBaseUrl = 'https://www.okx.com/cdn/assets'
 
 module.exports = {
   countryWhiteList,
