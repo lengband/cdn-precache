@@ -21,7 +21,7 @@ class Request {
   }
 
   async requestEntry(taskList) {
-    return this.asyncPool(10, taskList, this.requestByCountry)
+    return this.asyncPool(10, taskList, this.requestByCountry.bind(this));
   }
 
   async requestByCountry({ targetUrl }) {
