@@ -46,7 +46,7 @@ class Precache {
       console.log('allDiffFiles:', allDiffFiles);
 
       const taskList = allDiffFiles.map((file) => {
-        const assetUrl = this.getAssetUrl({ version, project: projectName, file, enableContentHashBuild: manifestRes.enableContentHashBuild });
+        const assetUrl = this.getAssetUrl({ version: targetProjects[project], project: projectName, file, enableContentHashBuild: manifestRes.enableContentHashBuild });
         return { assetUrl }
       })
 
