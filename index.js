@@ -12,7 +12,7 @@ const sleep = (s) => {
   })
 }
 
-getip.get('http://find.iplink.cc/find_http?key=417678f5aebcc7cb&count=1&type=json&only=0&country=5133&pw=no')
+getip.get('http://find.iplink.cc/find_http?key=417678f5aebcc7cb&count=10&type=json&only=0&country=5133&pw=no')
   .then((res) => {
     // res.data 是 类似下面的数据
     // 23.139.224.203:13692
