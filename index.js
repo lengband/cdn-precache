@@ -12,7 +12,7 @@ const sleep = (s) => {
   })
 }
 
-getip.get('https://api.smartproxy.cn/web_v1/ip/get-ip-v3?app_key=5d884abaf2ac978d71f6e2c9987e1508&pt=9&num=10&ep=&cc=ar&state=&city=&life=30&protocol=1&format=json&lb=%5Cr%5Cn')
+getip.get('http://find.iplink.cc/find_http?key=417678f5aebcc7cb&count=1&type=json&only=0&country=5133&pw=no')
   .then((res) => {
     // res.data 是 类似下面的数据
     // 23.139.224.203:13692
