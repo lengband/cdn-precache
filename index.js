@@ -18,6 +18,7 @@ getip.get('http://find.iplink.cc/find_http?key=417678f5aebcc7cb&count=10&type=js
     // 23.139.224.203:13692
     // 23.139.224.203:13693
     // 23.139.224.203:13694
+    console.log(res.data, ' res.data');
     const agentList = res.data.list;
     const testUrl = 'https://www.okx.com/cdn/assets/okfe/inner/assets-system-test/0.0.5/b.js';
     // const testUrl = 'https://static.okx.com/cdnpre/assets/okfe/inner/assets-system-test/0.0.5/d.js';
