@@ -38,20 +38,25 @@ class Precache {
         return targetProjects[project] !== localProjectVersion[project];
       });
 
-      const allDiffFiles = diffProjects.reduce((preDiffFiles, project) => {
-        const diffFiles = this.diffProjectManifest(project, targetProjects[project]);
-        return preDiffFiles.concat(diffFiles);
-      }, []);
+      const allDiffRes = await Promise.all(diffProjects.map(async (project) => {
+        const { diffFiles, manifestRes } = await this.diffProjectManifest(project, targetProjects[project]);
+        return { diffFiles, manifestRes, project };
+      }));
 
-      console.log('allDiffFiles:', allDiffFiles);
+      const taskList = [];
+      for (let i = 0; i < allDiffRes.length; i++) {
+        const { diffFiles, manifestRes, project } = allDiffRes[i];
+        for (let j = 0; j < diffFiles.length; j++) {
+          const file = diffFiles[j];
+          taskList.push({
+            assetUrl: this.getAssetUrl({ version: targetProjects[project], project, file, enableContentHashBuild: manifestRes.enableContentHashBuild })
+          })
+        }
+      }
 
-      const taskList = allDiffFiles.map((file) => {
-        const assetUrl = this.getAssetUrl({ version: targetProjects[project], project: projectName, file, enableContentHashBuild: manifestRes.enableContentHashBuild });
-        return { assetUrl }
-      })
+      console.log(`total taskList(${taskList.length}), starting`);
 
       await request.requestEntry(taskList)
-
       await fs.writeFileSync(`${this.dataDir}/projectVersion.json`, JSON.stringify(targetProjects, null, 2), 'utf-8'); // DEBUG
     } catch (error) {
       console.error('error:', error?.cause || error?.message);
@@ -70,7 +75,7 @@ class Precache {
       (file) => !localManifest.files.includes(file)
     );
     await fs.writeFileSync(`${this.dataDir}/${projectName}.json`, JSON.stringify(manifestRes, null, 2),'utf-8'); // DEBUG
-    return diffFiles;
+    return { diffFiles, manifestRes };
   }
 
   getAssetUrl({ version, enableContentHashBuild, project, file }) {
