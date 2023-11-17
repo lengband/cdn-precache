@@ -36,7 +36,7 @@ class Precache {
         this.diffProjectManifest(project, targetProjects[project])
       );
 
-      // await fs.writeFileSync(`${this.dataDir}/projectVersion.json`, JSON.stringify(targetProjects, null, 2), 'utf-8'); // DEBUG
+      await fs.writeFileSync(`${this.dataDir}/projectVersion.json`, JSON.stringify(targetProjects, null, 2), 'utf-8'); // DEBUG
     } catch (error) {
       console.error('error:', error?.cause || error?.message);
     }
@@ -54,7 +54,7 @@ class Precache {
       (file) => !localManifest.files.includes(file)
     );
     console.log({ diffFiles });
-    // await fs.writeFileSync(`${this.dataDir}/${projectName}.json`, JSON.stringify(manifestRes, null, 2),'utf-8'); // DEBUG
+    await fs.writeFileSync(`${this.dataDir}/${projectName}.json`, JSON.stringify(manifestRes, null, 2),'utf-8'); // DEBUG
     if (diffFiles.length) {
       const taskList = diffFiles.map((file) => {
         const assetUrl = this.getAssetUrl({ version, project: projectName, file, enableContentHashBuild: manifestRes.enableContentHashBuild });

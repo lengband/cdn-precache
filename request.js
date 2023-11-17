@@ -22,12 +22,12 @@ class Request {
       console.error('get proxy error:', error?.cause || error?.message);
     }
     // targetUrl = 'https://www.okx.com/cdn/assets/okfe/inner/assets-system-test/0.0.5/b.js';
-    await Promise.all(agentList.map((agentUrl, i) => this.singleFetch(targetUrl, agentUrl, { showContent: i === -1, showIp: true })))
+    await Promise.all(agentList.map((agentUrl, i) => this.singleFetch(targetUrl, agentUrl, { showContent: i === -1, showIp: false })))
   }
 
   async requestEntry(taskList) {
     console.log('taskList:', taskList);
-    return this.asyncPool(1, taskList, this.requestByCountry.bind(this));
+    return this.asyncPool(10, taskList, this.requestByCountry.bind(this));
   }
 
   async requestByCountry({ assetUrl }) {
