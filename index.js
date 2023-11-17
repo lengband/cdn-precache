@@ -1,59 +1,63 @@
+const fs = require('fs');
+const path = require('path');
 const axios = require('axios');
-const test = require('socks-proxy-agent');
-const { SocksProxyAgent } = test;
+const request = require('./request');
+const { projectWhiteList, cdnBaseUrl } = require('./strategy');
 
-const getip = axios.create();
+const axiosInstance = axios.create();
+class Precache {
 
-const sleep = (s) => {
-  return new Promise(resolve => {
-    setTimeout(() => {
-      resolve()
-    }, s * 1000)
-  })
+  dataDir = 'data';
+
+  async run() {
+    const { data: resData } = await axiosInstance.get(
+      'https://api.smartproxy.cn/web_v1/ip/get-ip-v3?app_key=5d884abaf2ac978d71f6e2c9987e1508&pt=9&num=10&ep=&cc=SG&state=&city=&life=30&protocol=1&format=json&lb=%5Cr%5Cn'
+    );
+    const agentList = resData.data.list;
+    const testUrl =
+      'https://www.okx.com/cdn/assets/okfe/inner/assets-system-test/0.0.5/b.js';
+    agentList.forEach((agentUrl, i) =>
+      request(testUrl, agentUrl, { showContent: i === 0, showIp: true })
+    );
+  }
+
+  async start() {
+    try {
+      const projectVersion = await axiosInstance.get(
+        `${cdnBaseUrl}/cdn/assets/projectVerson.json`
+      );
+      const targetProjects = projectWhiteList.reduce((acc, cur) => {
+        acc[cur] = projectVersion.data[cur];
+        return acc;
+      }, {});
+
+      // 与本地文件对比
+      const localProjectVersion = JSON.parse(
+        fs.readFileSync(`${this.dataDir}/projectVersion.json`, 'utf-8')
+      );
+      const diffProjects = Object.keys(targetProjects).filter((project) => {
+        return targetProjects[project] !== localProjectVersion[project];
+      });
+
+      diffProjects.forEach((project) =>
+        this.diffProjectManifest(project, targetProjects[project])
+      );
+
+      // await fs.writeFileSync(`${this.dataDir}/projectVersion.json`, JSON.stringify(targetProjects, null, 2), 'utf-8'); // DEBUG
+      // console.log('targetProjects:', targetProjects);
+    } catch (error) {
+      console.error('error:', error?.cause || error?.message);
+    }
+  }
+
+  async diffProjectManifest(projectName, version) {
+    const url = `${cdnBaseUrl}/cdn/assets/okfe/${projectName}/${version}/asset-manifest.json`;
+    const { data: manifestRes } = await axiosInstance.get(url);
+    await fs.writeFileSync(`${this.dataDir}/${projectName}.json`, JSON.stringify(manifestRes, null, 2),'utf-8');
+    console.log({ manifestRes });
+  }
 }
 
-getip.get('https://api.smartproxy.cn/web_v1/ip/get-ip-v3?app_key=5d884abaf2ac978d71f6e2c9987e1508&pt=9&num=20&ep=&cc=SG&state=&city=&life=30&protocol=1&format=json&lb=%5Cr%5Cn')
-  .then((res) => {
-    // res.data 是 类似下面的数据
-    // 23.139.224.203:13692
-    // 23.139.224.203:13693
-    // 23.139.224.203:13694
-    const agentList = res.data.data.list;
-    const testUrl = 'https://www.okx.com/cdn/assets/okfe/inner/assets-system-test/0.0.5/b.js';
-    // const testUrl = 'https://static.okx.com/cdnpre/assets/okfe/inner/assets-system-test/0.0.5/d.js';
-    console.log({ agentList, testUrl });
-    agentList.forEach(async (item, index) => {
-      await sleep(2 * index);
-      const agent = new SocksProxyAgent('socks5://' + item);
-      const instance = axios.create({
-        httpAgent: agent,
-        httpsAgent: agent,
-        headers: {
-          'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36 agent/cdn-precache'
-        }
-      });
-      // 发送请求
-      const { data: { data } } = await instance.get('http://143.92.61.72/utils/getRequestIpInfo')
-      const startTime = Date.now();
-      instance.get(testUrl)
-        .then(response => {
-          console.log({
-            index,
-            status: response.status,
-            CloudflareHit: response.headers['cf-cache-status'],
-            statusText: response.statusText,
-            cfRay: response.headers['cf-ray'],
-            ipInfo: data,
-            time: Date.now() - startTime,
-          });
-          if (index === 0) {
-            console.log(response.data, 'resssssssss');
-          }
-        })
-        .catch(error => {
-          console.error('get URL error:', error?.cause);
-        });
-    })
-  }).catch(error => {
-    console.error('wrap error:', error);
-  });
+
+const job = new Precache();
+job.start();
