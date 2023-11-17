@@ -8,6 +8,13 @@ class Request {
 
   appKey = '5d884abaf2ac978d71f6e2c9987e1508';
 
+  fetchState = {
+    total: 0,
+    success: 0,
+    error: 0,
+    successPercent: 0
+  }
+
   getProxyUrl(num = 10, cc) {
     return `https://api.smartproxy.cn/web_v1/ip/get-ip-v3?app_key=${this.appKey}&pt=9&num=${num}&ep=&cc=${cc}&state=&city=&life=30&protocol=1&format=json&lb=%5Cr%5Cn`
   }
@@ -36,10 +43,14 @@ class Request {
         num: countryWhiteList[key].number
       })
     }
-    console.log(`requestByCountry: ${i} / ${this.taskList.length} assetUrl(${assetUrl}) done`)
+    console.log(`
+      requestByCountry: ${i} / ${this.taskList.length} assetUrl(${assetUrl}) done
+      fetchState(total[${this.fetchState.total}] success[${this.fetchState.success}] error[${this.fetchState.error}] successPercent[${this.fetchState.successPercent})
+    `)
   }
 
   async singleFetch(targetUrl, agentUrl, { showContent, showIp } = {}) {
+    this.fetchState.total++;
     const agent = new SocksProxyAgent('socks5://' + agentUrl);
     const instance = axios.create({
       httpAgent: agent,
@@ -50,7 +61,7 @@ class Request {
       }
     });
   
-    const startTime = Date.now();
+    // const startTime = Date.now();
     const promiseList = [instance.get(targetUrl)];
     if (showIp) {
       promiseList.push(instance.get('http://143.92.61.72/utils/getRequestIpInfo'))
@@ -65,11 +76,17 @@ class Request {
       //   ipInfo: ipdata?.data?.data,
       //   time: Date.now() - startTime,
       // });
+      this.fetchState.success++;
+      this.fetchState.successPercent = this.fetchState.success / this.fetchState.total;
       if (showContent) {
         console.log(response.data, 'resssssssss');
       }
     } catch (error) {
-      console.error('get URL error:', error?.cause || error?.message);
+      this.fetchState.error++;
+      // const msg = error?.cause || error?.message;
+      // if (!msg.includes('timeout')) {
+      //   console.error('get URL error:', );
+      // }
     }
   }
 
