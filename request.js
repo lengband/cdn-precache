@@ -17,7 +17,6 @@ class Request {
     try {
       const { data: resData } = await axios.get(this.getProxyUrl(num, cc));
       agentList = resData.data.list;
-      console.log(`targetUrl(${targetUrl}), cc(${cc}), num(${num}) start proxy fetch`);
     } catch (error) {
       console.error('get proxy error:', error?.cause || error?.message);
     }
@@ -26,16 +25,17 @@ class Request {
   }
 
   async requestEntry(taskList) {
-    console.log('taskList:', taskList);
-    return this.asyncPool(10, taskList, this.requestByCountry.bind(this));
+    this.taskList = taskList;
+    return this.asyncPool(1, taskList, this.requestByCountry.bind(this));
   }
 
-  async requestByCountry({ assetUrl }) {
+  async requestByCountry({ assetUrl }, i) {
     for (const key in countryWhiteList) {
       await this.proxy(assetUrl, {
         cc: key,
         num: countryWhiteList[key].number
       })
+      console.log(`requestByCountry: ${i} / ${this.taskList.length} assetUrl(${assetUrl}) cc(${key}) done`)
     }
   }
 
@@ -57,14 +57,14 @@ class Request {
     }
     try {
       const [response, ipdata] = await Promise.all(promiseList)
-      console.log({
-        status: response.status,
-        CloudflareHit: response.headers['cf-cache-status'],
-        statusText: response.statusText,
-        cfRay: response.headers['cf-ray'],
-        ipInfo: ipdata?.data?.data,
-        time: Date.now() - startTime,
-      });
+      // console.log({
+      //   status: response.status,
+      //   CloudflareHit: response.headers['cf-cache-status'],
+      //   statusText: response.statusText,
+      //   cfRay: response.headers['cf-ray'],
+      //   ipInfo: ipdata?.data?.data,
+      //   time: Date.now() - startTime,
+      // });
       if (showContent) {
         console.log(response.data, 'resssssssss');
       }
@@ -83,9 +83,10 @@ class Request {
     async asyncPool(poolLimit, array, iteratorFn) {
       const ret = [];
       const executing = [];
-      for (const item of array) {
+      for (let i = 0; i < array.length; i++) {
+        const item = array[i];
         // 对每个元素执行迭代器函数，返回一个 Promise
-        const p = Promise.resolve().then(() => iteratorFn(item));
+        const p = Promise.resolve().then(() => iteratorFn(item, i));
         ret.push(p);
         // 当数组长度大于等于设定的并发限制时，开始进行并发控制
         if (poolLimit <= array.length) {

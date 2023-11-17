@@ -38,7 +38,19 @@ class Precache {
         return targetProjects[project] !== localProjectVersion[project];
       });
 
-      await Promise.all(diffProjects.map((project) => this.diffProjectManifest(project, targetProjects[project])));
+      const allDiffFiles = diffProjects.reduce((preDiffFiles, project) => {
+        const diffFiles = this.diffProjectManifest(project, targetProjects[project]);
+        return preDiffFiles.concat(diffFiles);
+      }, []);
+
+      console.log('allDiffFiles:', allDiffFiles);
+
+      const taskList = allDiffFiles.map((file) => {
+        const assetUrl = this.getAssetUrl({ version, project: projectName, file, enableContentHashBuild: manifestRes.enableContentHashBuild });
+        return { assetUrl }
+      })
+
+      await request.requestEntry(taskList)
 
       await fs.writeFileSync(`${this.dataDir}/projectVersion.json`, JSON.stringify(targetProjects, null, 2), 'utf-8'); // DEBUG
     } catch (error) {
@@ -50,7 +62,6 @@ class Precache {
   async diffProjectManifest(projectName, version) {
     const url = `${cdnBaseUrl}/okfe/${projectName}/${version}/asset-manifest.json`;
     const { data: manifestRes } = await axiosInstance.get(url);
-
     // 与本地文件对比，对比 files: string[] 字段
     const localManifest = JSON.parse(
       fs.readFileSync(`${this.dataDir}/${projectName}.json`, 'utf-8')
@@ -58,15 +69,8 @@ class Precache {
     const diffFiles = manifestRes.files.filter(
       (file) => !localManifest.files.includes(file)
     );
-    console.log({ diffFiles });
     await fs.writeFileSync(`${this.dataDir}/${projectName}.json`, JSON.stringify(manifestRes, null, 2),'utf-8'); // DEBUG
-    if (diffFiles.length) {
-      const taskList = diffFiles.map((file) => {
-        const assetUrl = this.getAssetUrl({ version, project: projectName, file, enableContentHashBuild: manifestRes.enableContentHashBuild });
-        return { assetUrl }
-      })
-      await request.requestEntry(taskList)
-    }
+    return diffFiles;
   }
 
   getAssetUrl({ version, enableContentHashBuild, project, file }) {
