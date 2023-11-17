@@ -13,9 +13,14 @@ class Request {
   }
 
   async proxy(targetUrl, { cc, num })  {
-    const { data: resData } = await axios.get(this.getProxyUrl(num, cc));
-    const agentList = resData.data.list;
-    console.log(`targetUrl(${targetUrl}), cc(${cc}), num(${num}) start proxy fetch`);
+    let agentList = [];
+    try {
+      const { data: resData } = await axios.get(this.getProxyUrl(num, cc));
+      agentList = resData.data.list;
+      console.log(`targetUrl(${targetUrl}), cc(${cc}), num(${num}) start proxy fetch`);
+    } catch (error) {
+      console.error('get proxy error:', error?.cause || error?.message);
+    }
     // targetUrl = 'https://www.okx.com/cdn/assets/okfe/inner/assets-system-test/0.0.5/b.js';
     await Promise.all(agentList.map((agentUrl, i) => this.singleFetch(targetUrl, agentUrl, { showContent: i === -1, showIp: true })))
   }
@@ -39,6 +44,7 @@ class Request {
     const instance = axios.create({
       httpAgent: agent,
       httpsAgent: agent,
+      timeout: 10000,
       headers: {
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36 agent/cdn-precache'
       }
