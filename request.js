@@ -15,8 +15,9 @@ class Request {
   async proxy(targetUrl, { cc, num })  {
     const { data: resData } = await axios.get(this.getProxyUrl(num, cc));
     const agentList = resData.data.list;
+    console.log(`targetUrl(${targetUrl}), cc(${cc}), num(${num}) start proxy fetch`);
     // targetUrl = 'https://www.okx.com/cdn/assets/okfe/inner/assets-system-test/0.0.5/b.js';
-    await Promise.all(agentList.map((agentUrl, i) => this.singleFetch(targetUrl, agentUrl, { showContent: i === 0, showIp: true })))
+    await Promise.all(agentList.map((agentUrl, i) => this.singleFetch(targetUrl, agentUrl, { showContent: i === -1, showIp: true })))
   }
 
   async requestEntry(targetUrl, project) {

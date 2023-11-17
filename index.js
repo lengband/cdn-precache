@@ -37,7 +37,6 @@ class Precache {
       );
 
       // await fs.writeFileSync(`${this.dataDir}/projectVersion.json`, JSON.stringify(targetProjects, null, 2), 'utf-8'); // DEBUG
-      // console.log('targetProjects:', targetProjects);
     } catch (error) {
       console.error('error:', error?.cause || error?.message);
     }
