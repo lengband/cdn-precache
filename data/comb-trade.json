@@ -1,10 +1,10 @@
 {
   "enableContentHashBuild": "true",
   "enableRTL": false,
-  "createTime": "2023-11-17 14:40:49",
+  "createTime": "2023-11-17 17:26:18",
   "files": [
-    "okex/index.c1697c92.js",
-    "3.84.4/remoteEntry.js",
+    "okex/index.253f8845.js",
+    "3.84.6/remoteEntry.js",
     "common/route-arbitrage.d7eb7223.css",
     "common/route-arbitrage.377034ad.js",
     "common/sw_bundle_trade.8e4bee89.css",
@@ -14,7 +14,7 @@
     "common/trade-chart.7b4af8fe.css",
     "common/trade-chart.06adf1b2.js",
     "common/7097.beea9b00.css",
-    "common/7097.573a2863.js",
+    "common/7097.ba71cc08.js",
     "common/Arb-layoutSm.241718a7.css",
     "common/Arb-layoutSm.7bdc83eb.js",
     "common/Arb-layoutMd.71021d00.css",
@@ -388,7 +388,7 @@
     "common/StrategyPeriodBase.188d6423.css",
     "common/StrategyPeriodBase.c829917a.js",
     "common/StrategyBase.dbd54171.css",
-    "common/StrategyBase.c83e58ba.js",
+    "common/StrategyBase.6f3cadd7.js",
     "common/ManualOrderMainDialog.de2377b1.css",
     "common/ManualOrderMainDialog.68ba44ac.js",
     "common/StrategyClosePosition.9eb7e73e.css",
@@ -600,7 +600,7 @@
     "common/4691.b6917384.js",
     "common/565.0ee03dd4.js",
     "common/6268.f27702f2.css",
-    "common/6268.c1bc0ec0.js",
+    "common/6268.d953c14a.js",
     "common/1623.51e33ac2.js",
     "common/6419.750426c6.js",
     "common/1563.ae9927f9.js",
@@ -710,7 +710,7 @@
     "common/2594.a719ca6d.css",
     "common/2594.676ed97d.js",
     "common/8397.98b38983.css",
-    "common/8397.661fc9ca.js",
+    "common/8397.c92d3232.js",
     "common/7821.05a90220.css",
     "common/7821.c3cb4171.js",
     "common/6947.31914a05.js",
@@ -775,9 +775,11 @@
       "2570/index.ac0edc36.js",
       "2170/index.4d4435cb.js",
       "okex/index.906bd686.css",
-      "okex/index.c1697c92.js"
+      "okex/index.253f8845.js"
     ],
-    "combReport": ["3.84.4/remoteEntry.js"]
+    "combReport": [
+      "3.84.6/remoteEntry.js"
+    ]
   },
   "dsn": "http://efc986e8cd9d46ae9aa1f455b6b0f383@sentry.okg.com/25",
   "enableSSRAutoPolyfill": false,

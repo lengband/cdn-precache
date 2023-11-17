@@ -17,7 +17,7 @@ class Precache {
   async start() {
     try {
       const projectVersion = await axiosInstance.get(
-        `${cdnBaseUrl}/cdn/assets/projectVerson.json`
+        `${cdnBaseUrl}/cdn/assets/projectVerson.json?v=${+new Date()}}`
       );
       const targetProjects = projectWhiteList.reduce((acc, cur) => {
         acc[cur] = projectVersion.data[cur];
@@ -53,13 +53,9 @@ class Precache {
     const diffFiles = manifestRes.files.filter(
       (file) => !localManifest.files.includes(file)
     );
+    console.log({ diffFiles });
     // await fs.writeFileSync(`${this.dataDir}/${projectName}.json`, JSON.stringify(manifestRes, null, 2),'utf-8'); // DEBUG
     if (diffFiles.length) {
-      console.log('diffFiles:', diffFiles);
-      diffFiles.forEach((file) => {
-        const assetUrl = this.getAssetUrl({ version, project: projectName, file, enableContentHashBuild: manifestRes.enableContentHashBuild });
-        request.requestEntry(assetUrl, projectName, { showContent: true })
-      });
       const taskList = diffFiles.map((file) => {
         const assetUrl = this.getAssetUrl({ version, project: projectName, file, enableContentHashBuild: manifestRes.enableContentHashBuild });
         return { assetUrl }

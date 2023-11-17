@@ -21,6 +21,7 @@ class Request {
   }
 
   async requestEntry(taskList) {
+    console.log('taskList:', taskList);
     return this.asyncPool(1, taskList, this.requestByCountry.bind(this));
   }
 
