@@ -9,12 +9,18 @@ class Precache {
 
   dataDir = 'data';
 
+  lock = false;
+
   projectContentwebMap = {
     'okfe/p2p': true, // https://static.coinall.ltd/cdn/assets/okfe/p2p/contentweb/9.2.304/asset-manifest.json
     'okfe/login': true,
   }
 
   async start() {
+    if (this.lock) {
+      return;
+    }
+    this.lock = true;
     try {
       const projectVersion = await axiosInstance.get(
         `${cdnBaseUrl}/projectVerson.json?v=${+new Date()}}`
@@ -32,14 +38,13 @@ class Precache {
         return targetProjects[project] !== localProjectVersion[project];
       });
 
-      diffProjects.forEach((project) =>
-        this.diffProjectManifest(project, targetProjects[project])
-      );
+      await Promise.all(diffProjects.map((project) => this.diffProjectManifest(project, targetProjects[project])));
 
       await fs.writeFileSync(`${this.dataDir}/projectVersion.json`, JSON.stringify(targetProjects, null, 2), 'utf-8'); // DEBUG
     } catch (error) {
       console.error('error:', error?.cause || error?.message);
     }
+    this.lock = false;
   }
 
   async diffProjectManifest(projectName, version) {
@@ -83,4 +88,7 @@ class Precache {
 
 
 const job = new Precache();
-job.start();
+
+setInterval(() => {
+  job.start();
+}, 10000)
