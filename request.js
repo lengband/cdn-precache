@@ -21,12 +21,12 @@ class Request {
   }
 
   async requestEntry(taskList) {
-    return this.asyncPool(10, taskList, this.requestByCountry.bind(this));
+    return this.asyncPool(1, taskList, this.requestByCountry.bind(this));
   }
 
-  async requestByCountry({ targetUrl }) {
+  async requestByCountry({ assetUrl }) {
     for (const key in countryWhiteList) {
-      await this.proxy(targetUrl, {
+      await this.proxy(assetUrl, {
         cc: key,
         num: countryWhiteList[key].number
       })
