@@ -24,8 +24,7 @@ getip.get('http://find.iplink.cc/find_http?key=417678f5aebcc7cb&count=1&type=jso
     console.log({ agentList, testUrl });
     agentList.forEach(async (item, index) => {
       await sleep(2 * index);
-      agentList[index] = 'socks5://' + item;
-      const agent = new SocksProxyAgent('socks5://' + item);
+      const agent = new SocksProxyAgent('socks5://' + item.server + item.port);
       const instance = axios.create({
         httpAgent: agent,
         httpsAgent: agent,
