@@ -26,7 +26,7 @@ class Request {
 
   async requestEntry(taskList) {
     this.taskList = taskList;
-    return this.asyncPool(1, taskList, this.requestByCountry.bind(this));
+    return this.asyncPool(10, taskList, this.requestByCountry.bind(this));
   }
 
   async requestByCountry({ assetUrl }, i) {
@@ -35,8 +35,8 @@ class Request {
         cc: key,
         num: countryWhiteList[key].number
       })
-      console.log(`requestByCountry: ${i} / ${this.taskList.length} assetUrl(${assetUrl}) cc(${key}) done`)
     }
+    console.log(`requestByCountry: ${i} / ${this.taskList.length} assetUrl(${assetUrl}) done`)
   }
 
   async singleFetch(targetUrl, agentUrl, { showContent, showIp } = {}) {
