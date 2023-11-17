@@ -777,9 +777,7 @@
       "okex/index.906bd686.css",
       "okex/index.c1697c92.js"
     ],
-    "combReport": [
-      "3.84.4/remoteEntry.js"
-    ]
+    "combReport": ["3.84.4/remoteEntry.js"]
   },
   "dsn": "http://efc986e8cd9d46ae9aa1f455b6b0f383@sentry.okg.com/25",
   "enableSSRAutoPolyfill": false,

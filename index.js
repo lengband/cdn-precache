@@ -53,14 +53,19 @@ class Precache {
     const diffFiles = manifestRes.files.filter(
       (file) => !localManifest.files.includes(file)
     );
+    // await fs.writeFileSync(`${this.dataDir}/${projectName}.json`, JSON.stringify(manifestRes, null, 2),'utf-8'); // DEBUG
     if (diffFiles.length) {
       console.log('diffFiles:', diffFiles);
       diffFiles.forEach((file) => {
         const assetUrl = this.getAssetUrl({ version, project: projectName, file, enableContentHashBuild: manifestRes.enableContentHashBuild });
         request.requestEntry(assetUrl, projectName, { showContent: true })
       });
+      const taskList = diffFiles.map((file) => {
+        const assetUrl = this.getAssetUrl({ version, project: projectName, file, enableContentHashBuild: manifestRes.enableContentHashBuild });
+        return { assetUrl }
+      })
+      await request.requestEntry(taskList)
     }
-    // await fs.writeFileSync(`${this.dataDir}/${projectName}.json`, JSON.stringify(manifestRes, null, 2),'utf-8'); // DEBUG
   }
 
   getAssetUrl({ version, enableContentHashBuild, project, file }) {

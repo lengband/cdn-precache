@@ -20,7 +20,11 @@ class Request {
     await Promise.all(agentList.map((agentUrl, i) => this.singleFetch(targetUrl, agentUrl, { showContent: i === -1, showIp: true })))
   }
 
-  async requestEntry(targetUrl, project) {
+  async requestEntry(taskList) {
+    return this.asyncPool(10, taskList, this.requestByCountry)
+  }
+
+  async requestByCountry({ targetUrl }) {
     for (const key in countryWhiteList) {
       await this.proxy(targetUrl, {
         cc: key,
