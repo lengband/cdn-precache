@@ -11,7 +11,7 @@ module.exports = {
       user: 'root',
       host: '144.34.183.167',
       ref: 'origin/V1',
-      repo: 'https://github.com/lengband/cdn-precache.git',
+      repo: 'https://github.com/lengband/cdn-precache',
       path: '/root/okfe',
       'pre-deploy-local': '',
       'post-deploy': 'npm install && pm2 reload ecosystem.config.js --env production',
