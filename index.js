@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const axios = require('axios');
-const request = require('./request');
+const { request } = require('./request');
 const { projectWhiteList, cdnBaseUrl } = require('./strategy');
 
 const axiosInstance = axios.create();
@@ -9,16 +9,9 @@ class Precache {
 
   dataDir = 'data';
 
-  async run() {
-    const { data: resData } = await axiosInstance.get(
-      'https://api.smartproxy.cn/web_v1/ip/get-ip-v3?app_key=5d884abaf2ac978d71f6e2c9987e1508&pt=9&num=10&ep=&cc=SG&state=&city=&life=30&protocol=1&format=json&lb=%5Cr%5Cn'
-    );
-    const agentList = resData.data.list;
-    const testUrl =
-      'https://www.okx.com/cdn/assets/okfe/inner/assets-system-test/0.0.5/b.js';
-    agentList.forEach((agentUrl, i) =>
-      request(testUrl, agentUrl, { showContent: i === 0, showIp: true })
-    );
+  projectContentwebMap = {
+    'okfe/p2p': true, // https://static.coinall.ltd/cdn/assets/okfe/p2p/contentweb/9.2.304/asset-manifest.json
+    'okfe/login': true,
   }
 
   async start() {
@@ -53,8 +46,38 @@ class Precache {
   async diffProjectManifest(projectName, version) {
     const url = `${cdnBaseUrl}/cdn/assets/okfe/${projectName}/${version}/asset-manifest.json`;
     const { data: manifestRes } = await axiosInstance.get(url);
-    await fs.writeFileSync(`${this.dataDir}/${projectName}.json`, JSON.stringify(manifestRes, null, 2),'utf-8');
-    console.log({ manifestRes });
+
+    // 与本地文件对比，对比 files: string[] 字段
+    const localManifest = JSON.parse(
+      fs.readFileSync(`${this.dataDir}/${projectName}.json`, 'utf-8')
+    );
+    const diffFiles = manifestRes.files.filter(
+      (file) => !localManifest.files.includes(file)
+    );
+    if (diffFiles.length) {
+      console.log('diffFiles:', diffFiles);
+      diffFiles.forEach((file) => {
+        const assetUrl = this.getAssetUrl({ version, project: projectName, file, enableContentHashBuild: manifestRes.enableContentHashBuild });
+        request.requestEntry(assetUrl, projectName, { showContent: true })
+      });
+    }
+    // await fs.writeFileSync(`${this.dataDir}/${projectName}.json`, JSON.stringify(manifestRes, null, 2),'utf-8'); // DEBUG
+  }
+
+  getAssetUrl({ version, enableContentHashBuild, project, file }) {
+    const isContentweb = this.projectContentwebMap[project];
+    let versionPrefix = `/${version}`;
+    // 兼容 ./index.js 情况
+    let filename = file.startsWith('./') ? file.slice(2) : file;
+    filename = filename.replace('/./', '/'); // 兼容：9.1.16/./index.media_lg_min-1024px.css
+    if (enableContentHashBuild === true || enableContentHashBuild === 'true') {
+      versionPrefix = '';
+    }
+    if (isContentweb) {
+      versionPrefix = '/contentweb';
+    }
+    const assetUrl = `${cdnBaseUrl}/cdn/assets/okfe/${project}${versionPrefix}/${filename}`;
+    return assetUrl
   }
 }
 
