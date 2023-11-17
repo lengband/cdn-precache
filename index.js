@@ -54,7 +54,9 @@ class Precache {
         }
       }
 
-      console.log(`total taskList(${taskList.length}), starting`);
+      if (taskList.length > 0) {
+        console.log(`total taskList(${taskList.length}), starting`);
+      }
 
       await request.requestEntry(taskList)
       await fs.writeFileSync(`${this.dataDir}/projectVersion.json`, JSON.stringify(targetProjects, null, 2), 'utf-8'); // DEBUG
