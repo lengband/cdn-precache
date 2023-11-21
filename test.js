@@ -9,7 +9,7 @@ request
     console.log({ resData });
     request({
       url: 'https://ipinfo.io',
-      proxy: `http://${resData[0].ip}:${resData[0].port}]}`,
+      proxy: `http://${resData[0].ip}:${resData[0].port}}`,
     })
       .then(function(data){
         console.log(data);
