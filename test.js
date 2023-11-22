@@ -20,8 +20,9 @@ request
             url: 'https://www.okx.com/cdn/assets/okfe/inner/assets-system-test/0.0.5/b.js',
             proxy: `http://${item.ip}:${item.port}}`,
             resolveWithFullResponse: true
-          }).then((body) => {
-            console.log('body:', body)
+          }).then((res) => {
+            console.log('body:', res.body)
+            console.log('headers:', res.headers)
           }).catch(console.error)
         },
         function(err){ console.error(err)})
