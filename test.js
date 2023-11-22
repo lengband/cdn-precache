@@ -19,7 +19,10 @@ request
           request({
             url: 'https://www.okx.com/cdn/assets/okfe/inner/assets-system-test/0.0.5/b.js',
             proxy: `http://${item.ip}:${item.port}}`,
-          }).then(console.log).catch(console.error)
+          }).then((body, res) => {
+            console.log('body:', body)
+            console.log('res.headers:', res.headers)
+          }).catch(console.error)
         },
         function(err){ console.error(err)})
     })
