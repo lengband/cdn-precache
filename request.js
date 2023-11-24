@@ -26,20 +26,20 @@ class Request {
       console.error('get proxy error:', error?.cause || error?.message);
     }
     // targetUrl = 'https://www.okx.com/cdn/assets/okfe/inner/assets-system-test/0.0.5/b.js';
-    await Promise.all(agentList.map((agent, i) => this.singleFetch(targetUrl, `${agent.ip}:${agent.port}`, { showContent: i === -1, showIp: false })))
+    await Promise.all(agentList.map((agent, i) => this.singleFetch(targetUrl, `${agent.ip}:${agent.port}`, { showContent: i === -1, showIp: true })))
   }
 
   async requestEntry(taskList) {
     this.taskList = taskList;
-    return this.asyncPool(1, taskList, this.requestByCountry.bind(this));
+    return this.asyncPool(10, taskList, this.requestByCountry.bind(this));
   }
 
   async requestByCountry({ assetUrl }, i) {
     for (const key in countryWhiteList) {
       await this.proxy(assetUrl, {
         cc: key,
-        // num: countryWhiteList[key].number
-        num: 1
+        num: countryWhiteList[key].number
+        // num: 1
       })
     }
     console.log(`
@@ -50,7 +50,7 @@ class Request {
 
   async singleFetch(targetUrl, agentUrl, { showContent, showIp } = {}) {
     this.fetchState.total++;
-    // const startTime = Date.now();
+    const startTime = Date.now();
     const promiseList = [request({ url: targetUrl, proxy: `socks5://${agentUrl}`, resolveWithFullResponse: true })];
     if (showIp) {
       promiseList.push(request({ url: 'https://ipinfo.io', proxy: `socks5://${agentUrl}` }))
@@ -58,11 +58,9 @@ class Request {
     try {
       const [response, ipdata] = await Promise.all(promiseList)
       console.log({
-        status: response.status,
         CloudflareHit: response.headers['cf-cache-status'],
-        statusText: response.statusText,
         cfRay: response.headers['cf-ray'],
-        ipInfo: ipdata,
+        ipInfo: JSON.parse(ipdata),
         time: Date.now() - startTime,
       });
       this.fetchState.success++;
@@ -71,7 +69,6 @@ class Request {
         console.log(response.body, 'resssssssss');
       }
     } catch (error) {
-      console.error('error', error);
       this.fetchState.error++;
       // const msg = error?.cause || error?.message;
       // if (!msg.includes('timeout')) {
