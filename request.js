@@ -26,7 +26,7 @@ class Request {
       console.error('get proxy error:', error?.cause || error?.message);
     }
     // targetUrl = 'https://www.okx.com/cdn/assets/okfe/inner/assets-system-test/0.0.5/b.js';
-    await Promise.all(agentList.map((agent, i) => this.singleFetch(targetUrl, `${agent.id}:${agent.port}`, { showContent: i === -1, showIp: false })))
+    await Promise.all(agentList.map((agent, i) => this.singleFetch(targetUrl, `${agent.ip}:${agent.port}`, { showContent: i === -1, showIp: false })))
   }
 
   async requestEntry(taskList) {
@@ -51,7 +51,7 @@ class Request {
   async singleFetch(targetUrl, agentUrl, { showContent, showIp } = {}) {
     this.fetchState.total++;
     // const startTime = Date.now();
-    const promiseList = [request({ url: targetUrl, proxy: `socks5://${agentUrl}`, })];
+    const promiseList = [request({ url: targetUrl, proxy: `socks5://${agentUrl}`, resolveWithFullResponse: true })];
     if (showIp) {
       promiseList.push(request({ url: 'https://ipinfo.io', proxy: `socks5://${agentUrl}` }))
     }
@@ -68,9 +68,10 @@ class Request {
       this.fetchState.success++;
       this.fetchState.successPercent = this.fetchState.success / this.fetchState.total;
       if (showContent) {
-        console.log(response.data, 'resssssssss');
+        console.log(response.body, 'resssssssss');
       }
     } catch (error) {
+      console.error('error', error);
       this.fetchState.error++;
       // const msg = error?.cause || error?.message;
       // if (!msg.includes('timeout')) {
