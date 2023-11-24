@@ -111,6 +111,6 @@ class Precache {
 
 const job = new Precache();
 
-// setInterval(() => {
+setInterval(() => {
   job.start();
-// }, 10000)
+}, 10000)
