@@ -26,7 +26,7 @@ class Request {
       console.error('get proxy error:', error?.cause || error?.message);
     }
     // targetUrl = 'https://www.okx.com/cdn/assets/okfe/inner/assets-system-test/0.0.5/b.js';
-    await Promise.all(agentList.map((agentUrl, i) => this.singleFetch(targetUrl, agentUrl, { showContent: i === -1, showIp: false })))
+    await Promise.all(agentList.map((agent, i) => this.singleFetch(`${agent.id}:${agent.port}`, agentUrl, { showContent: i === -1, showIp: false })))
   }
 
   async requestEntry(taskList) {
