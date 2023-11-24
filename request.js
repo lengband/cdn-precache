@@ -21,7 +21,7 @@ class Request {
     let agentList = [];
     try {
       const res = await request(this.getProxyUrl(num, cc));
-      agentList = JSON.parse(res).data;
+      agentList = JSON.parse(res).data || [];
     } catch (error) {
       console.error('get proxy error:', error?.cause || error?.message);
     }
@@ -31,14 +31,15 @@ class Request {
 
   async requestEntry(taskList) {
     this.taskList = taskList;
-    return this.asyncPool(10, taskList, this.requestByCountry.bind(this));
+    return this.asyncPool(1, taskList, this.requestByCountry.bind(this));
   }
 
   async requestByCountry({ assetUrl }, i) {
     for (const key in countryWhiteList) {
       await this.proxy(assetUrl, {
         cc: key,
-        num: countryWhiteList[key].number
+        // num: countryWhiteList[key].number
+        num: 1
       })
     }
     console.log(`

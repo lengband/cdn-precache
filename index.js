@@ -31,9 +31,7 @@ class Precache {
       }, {});
 
       // 与本地文件对比
-      const localProjectVersion = JSON.parse(
-        fs.readFileSync(`${this.dataDir}/projectVersion.json`, 'utf-8')
-      );
+      const localProjectVersion = this.readJsonFile(path.join(__dirname, `${this.dataDir}/projectVersion.json`));
       const diffProjects = Object.keys(targetProjects).filter((project) => {
         return targetProjects[project] !== localProjectVersion[project];
       });
@@ -70,9 +68,7 @@ class Precache {
     const url = `${cdnBaseUrl}/okfe/${projectName}/${version}/asset-manifest.json`;
     const { data: manifestRes } = await axiosInstance.get(url);
     // 与本地文件对比，对比 files: string[] 字段
-    const localManifest = JSON.parse(
-      fs.readFileSync(`${this.dataDir}/${projectName}.json`, 'utf-8')
-    );
+    const localManifest = this.readJsonFile(path.join(__dirname, `${this.dataDir}/${projectName}.json`), { files: [] });
     const diffFiles = manifestRes.files.filter(
       (file) => !localManifest.files.includes(file)
     );
@@ -95,11 +91,26 @@ class Precache {
     const assetUrl = `${cdnBaseUrl}/okfe/${project}${versionPrefix}/${filename}`;
     return assetUrl
   }
+
+  readJsonFile(filepath, defailtValue = {}) {
+    if (!fs.existsSync(filepath)) {
+      // 如果目录不存在，创建目录
+      const dir = path.dirname(filepath);
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir);
+      }
+      fs.writeFileSync(filepath, JSON.stringify(defailtValue, null, 2), { encoding: 'utf-8' });
+      return defailtValue;
+    }
+    return JSON.parse(
+      fs.readFileSync(filepath, 'utf-8')
+    );
+  }
 }
 
 
 const job = new Precache();
 
-setInterval(() => {
+// setInterval(() => {
   job.start();
-}, 10000)
+// }, 10000)
