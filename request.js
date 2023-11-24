@@ -26,7 +26,7 @@ class Request {
       console.error('get proxy error:', error?.cause || error?.message);
     }
     // targetUrl = 'https://www.okx.com/cdn/assets/okfe/inner/assets-system-test/0.0.5/b.js';
-    await Promise.all(agentList.map((agent, i) => this.singleFetch(targetUrl, `${agent.ip}:${agent.port}`, { showContent: i === -1, showIp: true })))
+    await Promise.all(agentList.map((agent, i) => this.singleFetch(targetUrl, `${agent.ip}:${agent.port}`, { showContent: i === -1, showIp: false })))
   }
 
   async requestEntry(taskList) {
@@ -50,19 +50,19 @@ class Request {
 
   async singleFetch(targetUrl, agentUrl, { showContent, showIp } = {}) {
     this.fetchState.total++;
-    const startTime = Date.now();
+    // const startTime = Date.now();
     const promiseList = [request({ url: targetUrl, proxy: `socks5://${agentUrl}`, resolveWithFullResponse: true })];
     if (showIp) {
       promiseList.push(request({ url: 'https://ipinfo.io', proxy: `socks5://${agentUrl}` }))
     }
     try {
       const [response, ipdata] = await Promise.all(promiseList)
-      console.log({
-        CloudflareHit: response.headers['cf-cache-status'],
-        cfRay: response.headers['cf-ray'],
-        ipInfo: JSON.parse(ipdata),
-        time: Date.now() - startTime,
-      });
+      // console.log({
+      //   CloudflareHit: response.headers['cf-cache-status'],
+      //   cfRay: response.headers['cf-ray'],
+      //   ipInfo: JSON.parse(ipdata),
+      //   time: Date.now() - startTime,
+      // });
       this.fetchState.success++;
       this.fetchState.successPercent = this.fetchState.success / this.fetchState.total;
       if (showContent) {
