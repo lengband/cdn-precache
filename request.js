@@ -1,7 +1,5 @@
-const axios = require('axios');
-const proxy = require('socks-proxy-agent');
+const request = require('request-promise');
 const { countryWhiteList } = require('./strategy');
-const { SocksProxyAgent } = proxy;
 
 
 class Request {
@@ -16,14 +14,14 @@ class Request {
   }
 
   getProxyUrl(num = 10, cc) {
-    return `https://api.smartproxy.cn/web_v1/ip/get-ip-v3?app_key=${this.appKey}&pt=9&num=${num}&ep=&cc=${cc}&state=&city=&life=30&protocol=1&format=json&lb=%5Cr%5Cn`
+    return `http://api.proxy.ipidea.io/getBalanceProxyIp?num=${num}&return_type=json&lb=1&sb=0&flow=1&regions=${cc}&protocol=socks5`
   }
 
   async proxy(targetUrl, { cc, num })  {
     let agentList = [];
     try {
-      const { data: resData } = await axios.get(this.getProxyUrl(num, cc));
-      agentList = resData.data.list;
+      const res = await request(this.getProxyUrl(num, cc));
+      agentList = JSON.parse(res).data;
     } catch (error) {
       console.error('get proxy error:', error?.cause || error?.message);
     }
@@ -51,31 +49,21 @@ class Request {
 
   async singleFetch(targetUrl, agentUrl, { showContent, showIp } = {}) {
     this.fetchState.total++;
-    const agent = new SocksProxyAgent('socks5://' + agentUrl);
-    const instance = axios.create({
-      httpAgent: agent,
-      httpsAgent: agent,
-      timeout: 10000,
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36 agent/cdn-precache'
-      }
-    });
-  
     // const startTime = Date.now();
-    const promiseList = [instance.get(targetUrl)];
+    const promiseList = [request({ url: targetUrl, proxy: `socks5://${agentUrl}`, })];
     if (showIp) {
-      promiseList.push(instance.get('http://143.92.61.72/utils/getRequestIpInfo'))
+      promiseList.push(request({ url: 'https://ipinfo.io', proxy: `socks5://${agentUrl}` }))
     }
     try {
       const [response, ipdata] = await Promise.all(promiseList)
-      // console.log({
-      //   status: response.status,
-      //   CloudflareHit: response.headers['cf-cache-status'],
-      //   statusText: response.statusText,
-      //   cfRay: response.headers['cf-ray'],
-      //   ipInfo: ipdata?.data?.data,
-      //   time: Date.now() - startTime,
-      // });
+      console.log({
+        status: response.status,
+        CloudflareHit: response.headers['cf-cache-status'],
+        statusText: response.statusText,
+        cfRay: response.headers['cf-ray'],
+        ipInfo: ipdata,
+        time: Date.now() - startTime,
+      });
       this.fetchState.success++;
       this.fetchState.successPercent = this.fetchState.success / this.fetchState.total;
       if (showContent) {
