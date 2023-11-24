@@ -40,9 +40,11 @@ const projectWhiteList = [
 ]
 
 const cdnBaseUrl = 'https://www.okx.com/cdn/assets'
+const hkCdnBaseUrl = 'https://static.okx.com/cdn/assets'
 
 module.exports = {
   countryWhiteList,
   projectWhiteList,
-  cdnBaseUrl
+  cdnBaseUrl,
+  hkCdnBaseUrl
 }

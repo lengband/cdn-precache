@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const axios = require('axios');
 const { request } = require('./request');
-const { projectWhiteList, cdnBaseUrl } = require('./strategy');
+const { projectWhiteList, cdnBaseUrl, hkCdnBaseUrl } = require('./strategy');
 
 const axiosInstance = axios.create();
 class Precache {
@@ -23,7 +23,7 @@ class Precache {
     this.lock = true;
     try {
       const projectVersion = await axiosInstance.get(
-        `${cdnBaseUrl}/projectVerson.json?v=${+new Date()}}`
+        `${hkCdnBaseUrl}/projectVerson.json?v=${+new Date()}}`
       );
       const targetProjects = projectWhiteList.reduce((acc, cur) => {
         acc[cur] = projectVersion.data[cur];
@@ -65,7 +65,7 @@ class Precache {
   }
 
   async diffProjectManifest(projectName, version) {
-    const url = `${cdnBaseUrl}/okfe/${projectName}/${version}/asset-manifest.json`;
+    const url = `${hkCdnBaseUrl}/okfe/${projectName}/${version}/asset-manifest.json`;
     const { data: manifestRes } = await axiosInstance.get(url);
     // 与本地文件对比，对比 files: string[] 字段
     const localManifest = this.readJsonFile(path.join(__dirname, `${this.dataDir}/${projectName}.json`), { files: [] });
