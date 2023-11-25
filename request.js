@@ -22,14 +22,16 @@ class Request {
     try {
       const res = await request(this.getProxyUrl(num, cc));
       agentList = JSON.parse(res).data || [];
+      console.log(`cc(${cc}) get proxy success: agentList${agentList}`);
     } catch (error) {
-      console.error('get proxy error:', error?.cause || error?.message);
+      console.error(`cc(${cc})get proxy error:`, error?.cause || error?.message);
     }
     // targetUrl = 'https://www.okx.com/cdn/assets/okfe/inner/assets-system-test/0.0.5/b.js';
     await Promise.all(agentList.map((agent, i) => this.singleFetch(targetUrl, `${agent.ip}:${agent.port}`, { showContent: i === -1, showIp: false })))
   }
 
   async requestEntry(taskList) {
+    taskList = taskList.slice(0, 2);
     this.taskList = taskList;
     return this.asyncPool(10, taskList, this.requestByCountry.bind(this));
   }
