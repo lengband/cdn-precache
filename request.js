@@ -22,7 +22,7 @@ class Request {
     try {
       const res = await request(this.getProxyUrl(num, cc));
       agentList = JSON.parse(res).data || [];
-      console.log(`cc(${cc}) get proxy success: agentList${agentList}`);
+      console.log(`cc(${cc}) get proxy success: res(${res})`);
     } catch (error) {
       console.error(`cc(${cc})get proxy error:`, error?.cause || error?.message);
     }
