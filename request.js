@@ -54,9 +54,10 @@ class Request {
   async singleFetch(targetUrl, agentUrl, { showContent, showIp } = {}) {
     this.fetchState.total++;
     // const startTime = Date.now();
-    const promiseList = [request({ url: targetUrl, proxy: `socks5://${agentUrl}`, resolveWithFullResponse: true })];
+    const proxy = `socks5://${agentUrl}`;
+    const promiseList = [request({ url: targetUrl, proxy, resolveWithFullResponse: true })];
     if (showIp) {
-      promiseList.push(request({ url: 'https://ipinfo.io', proxy: `socks5://${agentUrl}` }))
+      promiseList.push(request({ url: 'https://ipinfo.io', proxy }))
     }
     try {
       const [response, ipdata] = await Promise.all(promiseList)
