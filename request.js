@@ -15,7 +15,7 @@ class Request {
 
   getProxyUrl(num = 10, cc) {
     // spec：支持并发请求
-    return `http://api.proxy.ipidea.io/getBalanceProxyIp?num=${num}&return_type=json&lb=1&sb=0&flow=1&regions=${cc}&protocol=socks5&spec=1`
+    return `http://api.proxy.ipidea.io/getBalanceProxyIp?num=${num}&return_type=json&lb=1&sb=0&flow=1&regions=${cc}&protocol=socks5`
   }
 
   async proxy(targetUrl, { cc, num })  {
@@ -23,7 +23,7 @@ class Request {
     try {
       const res = await request(this.getProxyUrl(num, cc));
       agentList = JSON.parse(res).data || [];
-      // console.log(`cc(${cc}) get proxy success: res(${res})`);
+      console.log(`cc(${cc}) get proxy success: res(${res})`);
     } catch (error) {
       console.error(`cc(${cc})get proxy error:`, error?.cause || error?.message);
     }
@@ -55,7 +55,6 @@ class Request {
     this.fetchState.total++;
     // const startTime = Date.now();
     const proxy = `socks5://${agentUrl}`;
-    console.log({ proxy });
     const promiseList = [request({ url: targetUrl, proxy, resolveWithFullResponse: true })];
     if (showIp) {
       promiseList.push(request({ url: 'https://ipinfo.io', proxy }))
