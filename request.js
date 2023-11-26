@@ -55,6 +55,7 @@ class Request {
     this.fetchState.total++;
     // const startTime = Date.now();
     const proxy = `socks5://${agentUrl}`;
+    console.log({ proxy });
     const promiseList = [request({ url: targetUrl, proxy, resolveWithFullResponse: true })];
     if (showIp) {
       promiseList.push(request({ url: 'https://ipinfo.io', proxy }))
