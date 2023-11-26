@@ -73,6 +73,7 @@ class Request {
       }
     } catch (error) {
       this.fetchState.error++;
+      console.log("error:", error)
       // const msg = error?.cause || error?.message;
       // if (!msg.includes('timeout')) {
       //   console.error('get URL error:', );
