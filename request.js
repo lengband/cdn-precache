@@ -14,6 +14,7 @@ class Request {
   }
 
   getProxyUrl(num = 10, cc) {
+    // spec：支持并发请求
     return `http://api.proxy.ipidea.io/getBalanceProxyIp?num=${num}&return_type=json&lb=1&sb=0&flow=1&regions=${cc}&protocol=socks5&spec=1`
   }
 
@@ -37,7 +38,6 @@ class Request {
   }
 
   async requestByCountry({ assetUrl }, i) {
-    // todo：ipidea并发支持的不好，如果不支持并发，需要在外层先把代理节点请求出来，然后再并发请求
     for (const key in countryWhiteList) {
       await this.proxy(assetUrl, {
         cc: key,
