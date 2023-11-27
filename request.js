@@ -35,12 +35,12 @@ class Request {
   // 账密模式
   async proxy(targetUrl, { cc, num })  {
     const proxyUrl = `http://okfe_cdn_precache-zone-custom-region-${cc}:Wp257207@proxy.ipidea.io:2336`
-    let agentList = new Array(num);
+    let agentList = new Array(num).fill(1);
     await Promise.all(agentList.map((_, i) => this.singleFetch(targetUrl, proxyUrl, { showContent: i === -1, showIp: false })))
   }
 
   async requestEntry(taskList) {
-    taskList = taskList.slice(0, 2);
+    // taskList = taskList.slice(0, 2); // DEBUG
     this.taskList = taskList;
     return this.asyncPool(10, taskList, this.requestByCountry.bind(this));
   }
@@ -81,7 +81,7 @@ class Request {
       }
     } catch (error) {
       this.fetchState.error++;
-      console.log("error:", error)
+      // console.log("error:", error)
       // const msg = error?.cause || error?.message;
       // if (!msg.includes('timeout')) {
       //   console.error('get URL error:', );
