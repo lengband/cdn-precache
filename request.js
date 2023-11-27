@@ -18,17 +18,25 @@ class Request {
     return `http://api.proxy.ipidea.io/getBalanceProxyIp?num=${num}&return_type=json&lb=1&sb=0&flow=1&regions=${cc}&protocol=socks5`
   }
 
+  // api模式
+  // async proxy(targetUrl, { cc, num })  {
+  //   let agentList = [];
+  //   try {
+  //     const res = await request(this.getProxyUrl(num, cc));
+  //     agentList = JSON.parse(res).data || [];
+  //     console.log(`cc(${cc}) get proxy success: res(${res})`);
+  //   } catch (error) {
+  //     console.error(`cc(${cc})get proxy error:`, error?.cause || error?.message);
+  //   }
+  //   // targetUrl = 'https://www.okx.com/cdn/assets/okfe/inner/assets-system-test/0.0.5/b.js';
+  //   await Promise.all(agentList.map((agent, i) => this.singleFetch(targetUrl, `socks5://${agent.ip}:${agent.port}`, { showContent: i === -1, showIp: false })))
+  // }
+
+  // 账密模式
   async proxy(targetUrl, { cc, num })  {
-    let agentList = [];
-    try {
-      const res = await request(this.getProxyUrl(num, cc));
-      agentList = JSON.parse(res).data || [];
-      console.log(`cc(${cc}) get proxy success: res(${res})`);
-    } catch (error) {
-      console.error(`cc(${cc})get proxy error:`, error?.cause || error?.message);
-    }
-    // targetUrl = 'https://www.okx.com/cdn/assets/okfe/inner/assets-system-test/0.0.5/b.js';
-    await Promise.all(agentList.map((agent, i) => this.singleFetch(targetUrl, `${agent.ip}:${agent.port}`, { showContent: i === -1, showIp: false })))
+    const proxyUrl = `http://okfe_cdn_precache-zone-custom-region-${cc}:Wp257207@proxy.ipidea.io:2336`
+    let agentList = new Array(num);
+    await Promise.all(agentList.map((_, i) => this.singleFetch(targetUrl, proxyUrl, { showContent: i === -1, showIp: false })))
   }
 
   async requestEntry(taskList) {
@@ -51,10 +59,9 @@ class Request {
     `)
   }
 
-  async singleFetch(targetUrl, agentUrl, { showContent, showIp } = {}) {
+  async singleFetch(targetUrl, proxy, { showContent, showIp } = {}) {
     this.fetchState.total++;
     // const startTime = Date.now();
-    const proxy = `socks5://${agentUrl}`;
     const promiseList = [request({ url: targetUrl, proxy, resolveWithFullResponse: true })];
     if (showIp) {
       promiseList.push(request({ url: 'https://ipinfo.io', proxy }))
