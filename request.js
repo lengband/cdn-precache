@@ -4,7 +4,7 @@ const { countryWhiteList } = require('./strategy');
 
 class Request {
 
-  appKey = '5d884abaf2ac978d71f6e2c9987e1508';
+  // smartProxyAppKey = '5d884abaf2ac978d71f6e2c9987e1508';
 
   fetchState = {
     total: 0,
