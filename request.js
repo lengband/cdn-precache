@@ -31,9 +31,10 @@ class Request {
   }
 
   async requestEntry(taskList) {
-    taskList = taskList.slice(0, 2);
+    // taskList = taskList.slice(0, 2);
     this.taskList = taskList;
-    return this.asyncPool(1, taskList, this.requestByCountry.bind(this));
+    // return this.asyncPool(5, taskList, this.requestByCountry.bind(this));
+    return await Promise.all(taskList.map((task, i) => this.requestByCountry(task, i)));
   }
 
   async requestByCountry({ assetUrl }, i) {
@@ -43,16 +44,20 @@ class Request {
         num: countryWhiteList[key].number
         // num: 1
       })
-    }
-    console.log(`
-      requestByCountry: ${i} / ${this.taskList.length} assetUrl(${assetUrl}) done
+      console.log(`
+      requestByCountry: ${i}cc(${cc}) / ${this.taskList.length} assetUrl(${assetUrl}) done
       fetchState(total[${this.fetchState.total}] success[${this.fetchState.success}] error[${this.fetchState.error}] successPercent[${this.fetchState.successPercent})
     `)
+    }
+    // console.log(`
+    //   requestByCountry: ${i} / ${this.taskList.length} assetUrl(${assetUrl}) done
+    //   fetchState(total[${this.fetchState.total}] success[${this.fetchState.success}] error[${this.fetchState.error}] successPercent[${this.fetchState.successPercent})
+    // `)
   }
 
   async singleFetch(targetUrl, agentUrl, { showContent, showIp } = {}) {
     this.fetchState.total++;
-    const startTime = Date.now();
+    // const startTime = Date.now();
     const proxy = `socks5://${agentUrl}`;
     const promiseList = [request({ url: targetUrl, proxy, resolveWithFullResponse: true, timeout: 5000 })];
     if (showIp) {
@@ -60,14 +65,14 @@ class Request {
     }
     try {
       const [response, ipdata] = await Promise.all(promiseList)
-      console.log({
-        targetUrl,
-        proxy,
-        CloudflareHit: response.headers['cf-cache-status'],
-        cfRay: response.headers['cf-ray'],
-        ipInfo: JSON.parse(typeof ipdata === 'object' ? ipdata : '{}'),
-        time: Date.now() - startTime,
-      });
+      // console.log({
+      //   targetUrl,
+      //   proxy,
+      //   CloudflareHit: response.headers['cf-cache-status'],
+      //   cfRay: response.headers['cf-ray'],
+      //   ipInfo: JSON.parse(typeof ipdata === 'object' ? ipdata : '{}'),
+      //   time: Date.now() - startTime,
+      // });
       this.fetchState.success++;
       this.fetchState.successPercent = this.fetchState.success / this.fetchState.total;
       if (showContent) {
