@@ -14,7 +14,6 @@ class Request {
   }
 
   getProxyUrl(num = 10, cc) {
-    // spec：支持并发请求
     return `http://api.proxy.ipidea.io/getBalanceProxyIp?num=${num}&return_type=json&lb=1&sb=0&flow=1&regions=${cc}&protocol=socks5`
   }
 
@@ -34,7 +33,7 @@ class Request {
   async requestEntry(taskList) {
     taskList = taskList.slice(0, 2);
     this.taskList = taskList;
-    return this.asyncPool(10, taskList, this.requestByCountry.bind(this));
+    return this.asyncPool(1, taskList, this.requestByCountry.bind(this));
   }
 
   async requestByCountry({ assetUrl }, i) {
@@ -53,7 +52,7 @@ class Request {
 
   async singleFetch(targetUrl, agentUrl, { showContent, showIp } = {}) {
     this.fetchState.total++;
-    // const startTime = Date.now();
+    const startTime = Date.now();
     const proxy = `socks5://${agentUrl}`;
     const promiseList = [request({ url: targetUrl, proxy, resolveWithFullResponse: true })];
     if (showIp) {
@@ -61,12 +60,14 @@ class Request {
     }
     try {
       const [response, ipdata] = await Promise.all(promiseList)
-      // console.log({
-      //   CloudflareHit: response.headers['cf-cache-status'],
-      //   cfRay: response.headers['cf-ray'],
-      //   ipInfo: JSON.parse(ipdata),
-      //   time: Date.now() - startTime,
-      // });
+      console.log({
+        url,
+        proxy,
+        CloudflareHit: response.headers['cf-cache-status'],
+        cfRay: response.headers['cf-ray'],
+        ipInfo: JSON.parse(typeof ipdata === 'object' ? ipdata : {}),
+        time: Date.now() - startTime,
+      });
       this.fetchState.success++;
       this.fetchState.successPercent = this.fetchState.success / this.fetchState.total;
       if (showContent) {
