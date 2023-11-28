@@ -54,18 +54,18 @@ class Request {
     this.fetchState.total++;
     const startTime = Date.now();
     const proxy = `socks5://${agentUrl}`;
-    const promiseList = [request({ url: targetUrl, proxy, resolveWithFullResponse: true })];
+    const promiseList = [request({ url: targetUrl, proxy, resolveWithFullResponse: true, timeout: 5000 })];
     if (showIp) {
       promiseList.push(request({ url: 'https://ipinfo.io', proxy }))
     }
     try {
       const [response, ipdata] = await Promise.all(promiseList)
       console.log({
-        url,
+        targetUrl,
         proxy,
         CloudflareHit: response.headers['cf-cache-status'],
         cfRay: response.headers['cf-ray'],
-        ipInfo: JSON.parse(typeof ipdata === 'object' ? ipdata : {}),
+        ipInfo: JSON.parse(typeof ipdata === 'object' ? ipdata : '{}'),
         time: Date.now() - startTime,
       });
       this.fetchState.success++;
