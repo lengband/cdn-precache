@@ -36,9 +36,9 @@ class Request {
   }
 
   async requestEntry(taskList) {
-    // taskList = taskList.slice(0, 2);
+    // taskList = taskList.slice(0, 2); // DEBUG
     this.taskList = taskList;
-    return await Promise.all(taskList.map((task, i) => this.requestByCountry(task, i)));
+    return this.asyncPool(10, taskList, this.requestByCountry.bind(this));
   }
 
   async requestByCountry({ assetUrl }, i) {
@@ -90,6 +90,35 @@ class Request {
       // }
     }
   }
+
+  /**
+   * 并发控制器函数
+   * @param {number} poolLimit 并发限制数
+   * @param {T[]} array 需要进行并发控制的任务数组
+   * @param {(item: T) => Promise<R>} iteratorFn 每个队列任务完成后的回调
+   * @return {Promise<R[]>} 返回所有队列的回调的返回结果
+   */
+    async asyncPool(poolLimit, array, iteratorFn) {
+      const ret = [];
+      const executing = [];
+      for (let i = 0; i < array.length; i++) {
+        const item = array[i];
+        // 对每个元素执行迭代器函数，返回一个 Promise
+        const p = Promise.resolve().then(() => iteratorFn(item, i));
+        ret.push(p);
+        // 当数组长度大于等于设定的并发限制时，开始进行并发控制
+        if (poolLimit <= array.length) {
+          // 当 Promise p 完成时，从 executing 数组中移除它
+          const e = p.then(() => executing.splice(executing.indexOf(e), 1));
+          executing.push(e);
+  
+          if (executing.length >= poolLimit) {
+            await Promise.race(executing);
+          }
+        }
+      }
+      return Promise.all(ret);
+    }
 }
 
 
