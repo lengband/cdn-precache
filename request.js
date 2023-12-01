@@ -48,34 +48,34 @@ class Request {
         num: countryWhiteList[key].number
         // num: 1
       })
-      console.log(`
-      requestByCountry: ${i}cc(${key}) / ${this.taskList.length} assetUrl(${assetUrl}) done
+      // console.log(`
+      //   requestByCountry: ${i}cc(${key}) / ${this.taskList.length} assetUrl(${assetUrl}) done
+      //   fetchState(total[${this.fetchState.total}] success[${this.fetchState.success}] error[${this.fetchState.error}] successPercent[${this.fetchState.successPercent})
+      // `)
+    }
+    console.log(`
+      requestByCountry: ${i} / ${this.taskList.length} assetUrl(${assetUrl}) done
       fetchState(total[${this.fetchState.total}] success[${this.fetchState.success}] error[${this.fetchState.error}] successPercent[${this.fetchState.successPercent})
     `)
-    }
-    // console.log(`
-    //   requestByCountry: ${i} / ${this.taskList.length} assetUrl(${assetUrl}) done
-    //   fetchState(total[${this.fetchState.total}] success[${this.fetchState.success}] error[${this.fetchState.error}] successPercent[${this.fetchState.successPercent})
-    // `)
   }
 
   async singleFetch(targetUrl, proxy, { showContent, showIp } = {}) {
     this.fetchState.total++;
-    // const startTime = Date.now();
+    // const startTime = +Date.now();
     const promiseList = [request({ url: targetUrl, proxy, resolveWithFullResponse: true, timeout: 5000 })];
     if (showIp) {
       promiseList.push(request({ url: 'https://ipinfo.io', proxy }))
     }
     try {
       const [response, ipdata] = await Promise.all(promiseList)
-      console.log({
-        targetUrl,
-        proxy,
-        CloudflareHit: response.headers['cf-cache-status'],
-        cfRay: response.headers['cf-ray'],
-        ipInfo: JSON.parse(typeof ipdata === 'object' ? ipdata : '{}'),
-        time: Date.now() - startTime,
-      });
+      // console.log({
+      //   targetUrl,
+      //   proxy,
+      //   CloudflareHit: response.headers['cf-cache-status'],
+      //   cfRay: response.headers['cf-ray'],
+      //   ipInfo: JSON.parse(typeof ipdata === 'object' ? ipdata : '{}'),
+      //   time: Date.now() - typeof startTime === 'number' ? startTime : 0,
+      // });
       this.fetchState.success++;
       this.fetchState.successPercent = this.fetchState.success / this.fetchState.total;
       if (showContent) {
@@ -83,7 +83,7 @@ class Request {
       }
     } catch (error) {
       this.fetchState.error++;
-      console.log("error:", error)
+      // console.log("error:", error)
       // const msg = error?.cause || error?.message;
       // if (!msg.includes('timeout')) {
       //   console.error('get URL error:', );
