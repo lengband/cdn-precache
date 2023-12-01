@@ -15,7 +15,7 @@ class Request {
     return `http://api.proxy.ipidea.io/getBalanceProxyIp?num=${num}&return_type=json&lb=1&sb=0&flow=1&regions=${cc}&protocol=socks5&spec=1`
   }
 
-  async proxy(targetUrl, { cc, num })  {
+  async proxyByApi(targetUrl, { cc, num })  {
     let agentList = [];
     try {
       const res = await request(this.getProxyUrl(num, cc));
@@ -25,7 +25,14 @@ class Request {
       console.error(`cc(${cc})get proxy error:`, error?.cause || error?.message);
     }
     // targetUrl = 'https://www.okx.com/cdn/assets/okfe/inner/assets-system-test/0.0.5/b.js';
-    await Promise.all(agentList.map((agent, i) => this.singleFetch(targetUrl, `${agent.ip}:${agent.port}`, { showContent: i === -1, showIp: false })))
+    await Promise.all(agentList.map((agent, i) => this.singleFetch(targetUrl, `socks5://${agent.ip}:${agent.port}`, { showContent: i === -1, showIp: false })))
+  }
+
+  async proxyByAccount(targetUrl, { cc, num })  {
+    let agentList = new Array(num).fill(0);
+    const proxy = `http://okfe_cdn_precache-zone-custom-region-${cc}:Wp257207@proxy.ipidea.io:2336`;
+    // targetUrl = 'https://www.okx.com/cdn/assets/okfe/inner/assets-system-test/0.0.5/b.js';
+    await Promise.all(agentList.map((_, i) => this.singleFetch(targetUrl, proxy, { showContent: i === -1, showIp: false })))
   }
 
   async requestEntry(taskList) {
@@ -36,7 +43,7 @@ class Request {
 
   async requestByCountry({ assetUrl }, i) {
     for (const key in countryWhiteList) {
-      await this.proxy(assetUrl, {
+      await this.proxyByAccount(assetUrl, {
         cc: key,
         num: countryWhiteList[key].number
         // num: 1
@@ -52,24 +59,23 @@ class Request {
     // `)
   }
 
-  async singleFetch(targetUrl, agentUrl, { showContent, showIp } = {}) {
+  async singleFetch(targetUrl, proxy, { showContent, showIp } = {}) {
     this.fetchState.total++;
     // const startTime = Date.now();
-    const proxy = `socks5://${agentUrl}`;
     const promiseList = [request({ url: targetUrl, proxy, resolveWithFullResponse: true, timeout: 5000 })];
     if (showIp) {
       promiseList.push(request({ url: 'https://ipinfo.io', proxy }))
     }
     try {
       const [response, ipdata] = await Promise.all(promiseList)
-      // console.log({
-      //   targetUrl,
-      //   proxy,
-      //   CloudflareHit: response.headers['cf-cache-status'],
-      //   cfRay: response.headers['cf-ray'],
-      //   ipInfo: JSON.parse(typeof ipdata === 'object' ? ipdata : '{}'),
-      //   time: Date.now() - startTime,
-      // });
+      console.log({
+        targetUrl,
+        proxy,
+        CloudflareHit: response.headers['cf-cache-status'],
+        cfRay: response.headers['cf-ray'],
+        ipInfo: JSON.parse(typeof ipdata === 'object' ? ipdata : '{}'),
+        time: Date.now() - startTime,
+      });
       this.fetchState.success++;
       this.fetchState.successPercent = this.fetchState.success / this.fetchState.total;
       if (showContent) {
