@@ -3,7 +3,7 @@ module.exports = {
     name: 'cdn-precache',
     script: 'index.js',
     watch: true,
-    ignore_watch: ['node_modules', 'logs'],
+    ignore_watch: ['node_modules', 'logs', 'data'],
     max_memory_restart: '2G',
   }],
   deploy: {
