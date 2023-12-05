@@ -78,11 +78,12 @@ class Precache {
         }
         localRecord.history.push(...recordData);
         fs.writeFileSync(localFile, JSON.stringify(localRecord, null, 2), 'utf-8');
-      }
 
-      await request.requestEntry(taskList)
-      await fs.writeFileSync(`${this.dataDir}/projectVersion.json`, JSON.stringify(targetProjects, null, 2), 'utf-8');
-      console.log(`[${new Date().toLocaleString()}] taskList(${taskList.length}) done~~~~~~~~~~~~~~~~~~~~~~~~~!`);
+        // 开始预缓存
+        await request.requestEntry(taskList)
+        await fs.writeFileSync(`${this.dataDir}/projectVersion.json`, JSON.stringify(targetProjects, null, 2), 'utf-8');
+        console.log(`[${new Date().toLocaleString()}] taskList(${taskList.length}) done~~~~~~~~~~~~~~~~~~~~~~~~~!`);
+      }
     } catch (error) {
       console.error('error:', error?.cause || error?.message);
     }
