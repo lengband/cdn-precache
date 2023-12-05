@@ -38,24 +38,22 @@ class Request {
   async requestEntry(taskList) {
     // taskList = taskList.slice(0, 2); // DEBUG
     this.taskList = taskList;
-    return this.asyncPool(10, taskList, this.requestByCountry.bind(this));
+    return this.asyncPool(20, taskList, this.requestByCountry.bind(this));
   }
 
   async requestByCountry({ assetUrl }, i) {
+    let totalNum = 0;
     for (const key in countryWhiteList) {
       await this.proxyByAccount(assetUrl, {
         cc: key,
         num: countryWhiteList[key].number
-        // num: 1
       })
-      // console.log(`
-      //   requestByCountry: ${i}cc(${key}) / ${this.taskList.length} assetUrl(${assetUrl}) done
-      //   fetchState(total[${this.fetchState.total}] success[${this.fetchState.success}] error[${this.fetchState.error}] successPercent[${this.fetchState.successPercent})
-      // `)
+      totalNum += countryWhiteList[key].number;
     }
+    const time = new Date().toLocaleString();
     console.log(`
-      requestByCountry: ${i} / ${this.taskList.length} assetUrl(${assetUrl}) done
-      fetchState(total[${this.fetchState.total}] success[${this.fetchState.success}] error[${this.fetchState.error}] successPercent[${this.fetchState.successPercent})
+      [${time}] requestByCountry: ${i} / ${this.taskList.length} assetUrl(${assetUrl}) done
+      fetchState(target[${this.taskList.length * totalNum}] total[${this.fetchState.total}] success[${this.fetchState.success}] error[${this.fetchState.error}] successPercent[${this.fetchState.successPercent})
     `)
   }
 

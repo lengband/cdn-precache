@@ -54,10 +54,35 @@ class Precache {
 
       if (taskList.length > 0) {
         console.log(`total taskList(${taskList.length}), starting`);
+        // 记录每次diff文件变更
+        const recordData = allDiffRes.map(item => {
+          const oldVersion = localProjectVersion[item.project];
+          return {
+            oldVersion,
+            newVersion: targetProjects[item.project],
+            project: item.project,
+            manifestCreatedTime: item.manifestRes.createTime,
+            diffFiles: oldVersion ? item.diffFiles : [],
+            recordTime: new Date().toLocaleString()
+          }
+        }).filter(item => item.diffFiles.length > 0)
+        const localFile = path.join(__dirname, `${this.dataDir}/record.json`);
+        const localRecord = this.readJsonFile(localFile, { history: [] });
+        // 读取localFile大小，如果超过100M，清空
+        const stats = fs.statSync(localFile);
+        const fileSizeInBytes = stats.size;
+        const fileSizeInMegabytes = fileSizeInBytes / (1024 * 1024);
+        // 如果文件超过100MB，清空文件
+        if (fileSizeInMegabytes > 100) {
+          fs.writeFileSync(localFile, JSON.stringify({ history: [] }, null, 2), 'utf-8');
+        }
+        localRecord.history.push(...recordData);
+        fs.writeFileSync(localFile, JSON.stringify(localRecord, null, 2), 'utf-8');
       }
 
       await request.requestEntry(taskList)
-      await fs.writeFileSync(`${this.dataDir}/projectVersion.json`, JSON.stringify(targetProjects, null, 2), 'utf-8'); // DEBUG
+      await fs.writeFileSync(`${this.dataDir}/projectVersion.json`, JSON.stringify(targetProjects, null, 2), 'utf-8');
+      console.log(`[${new Date().toLocaleString()}] taskList(${taskList.length}) done~~~~~~~~~~~~~~~~~~~~~~~~~!`);
     } catch (error) {
       console.error('error:', error?.cause || error?.message);
     }
@@ -72,7 +97,7 @@ class Precache {
     const diffFiles = manifestRes.files.filter(
       (file) => !localManifest.files.includes(file)
     );
-    await fs.writeFileSync(`${this.dataDir}/${projectName}.json`, JSON.stringify(manifestRes, null, 2),'utf-8'); // DEBUG
+    await fs.writeFileSync(`${this.dataDir}/${projectName}.json`, JSON.stringify(manifestRes, null, 2),'utf-8');
     return { diffFiles, manifestRes };
   }
 
